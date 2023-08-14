@@ -1,7 +1,21 @@
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
+
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function Home() {
-  return <div>Hello Home</div>;
+  const { data } = useSession();
+
+  return (
+    <div>
+      {data?.user ? (
+        <button onClick={() => signOut()}>Sign Out</button>
+      ) : (
+        <button onClick={() => signIn("google")}>Sign In</button>
+      )}
+
+      {data?.user?.name}
+    </div>
+  );
 }
