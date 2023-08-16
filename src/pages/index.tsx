@@ -1,18 +1,14 @@
-// import { Inter } from "next/font/google";
-
-// const inter = Inter({ subsets: ["latin"] });
-
 import Auth from "@/components/Auth/Auth";
 import Chat from "@/components/Chat/Chat";
 import { Box } from "@chakra-ui/react";
-import { NextPageContext } from "next";
+import type { NextPageContext } from "next";
 import { getSession, useSession } from "next-auth/react";
 import { Session } from "next-auth";
 
 export default function Home() {
   const { data: session } = useSession();
-  console.log(session);
-
+  console.log("clientSession", session);
+  // node v16.14.2, npm 8.5.0
   const reloadSession = () => {};
 
   return (
