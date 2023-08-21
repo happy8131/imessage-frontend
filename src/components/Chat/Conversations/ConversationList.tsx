@@ -33,7 +33,7 @@ const ConversationList = ({ session }: ConversationListProps) => {
           Find or start a conversation
         </Text>
       </Box>
-      <ConversationMoal isOpen={isOpen} onClose={onClose} />
+      <ConversationMoal session={session} isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 };

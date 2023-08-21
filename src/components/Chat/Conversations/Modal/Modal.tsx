@@ -11,31 +11,56 @@ import {
   Text,
 } from "@chakra-ui/react";
 import UserOperations from "../../../../graphql/operations/user";
+import ConversationOperations from "../../../../graphql/operations/conversation";
 import React, { useCallback, useState } from "react";
-import { Observable, useLazyQuery } from "@apollo/client";
-import { SearchedUser, SearchUsersData, SearchUsersInput } from "@/util/types";
+import { Observable, useLazyQuery, useMutation } from "@apollo/client";
+import {
+  CreateConversationData,
+  SearchedUser,
+  SearchUsersData,
+  SearchUsersInput,
+} from "@/util/types";
 import UserSearchList from "./userSearchList";
 import Participants from "./Participants";
 import toast from "react-hot-toast";
+import { Session } from "next-auth";
 
 interface ModalProps {
+  session: Session;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ConversationModal = ({ isOpen, onClose }: ModalProps) => {
+const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
+  const {
+    user: { id: userId },
+  } = session;
   const [username, setUsername] = useState("");
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   const [searchUsers, { data, loading, error }] = useLazyQuery<any>(
     UserOperations.Queries.searchUsers
   );
-  console.log("HERE IS SEARCH DATA", data);
 
+  const [createConversation, { loading: createConversationLoading }] =
+    useMutation<CreateConversationData>(
+      ConversationOperations.Mutations.createConversation
+    );
+  console.log("HERE IS SEARCH DATA", data);
+  console.log(participants.map((s) => s.id));
   const onCreateConversation = async () => {
+    const participantIds = [userId, ...participants.map((p) => p.id)];
+
     try {
       // createConversation Mutation
+      const { data } = await createConversation({
+        variables: {
+          participantIds,
+        },
+      });
+
+      console.log("DATA", data);
     } catch (err: any) {
-      console.log(err);
+      console.log("onCreateConversation", err);
       toast.error(err?.message);
     }
   };
@@ -58,7 +83,7 @@ const ConversationModal = ({ isOpen, onClose }: ModalProps) => {
     console.log("removeParticipant");
     setParticipants((prev) => prev.filter((p) => p.id !== userId));
   };
-  console.log(participants);
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -97,7 +122,8 @@ const ConversationModal = ({ isOpen, onClose }: ModalProps) => {
                   width="100%"
                   mt={6}
                   _hover={{ bg: "gray.100" }}
-                  onClick={() => {}}
+                  isLoading={createConversationLoading}
+                  onClick={onCreateConversation}
                 >
                   Create Conversation
                 </Button>
