@@ -7,7 +7,7 @@ interface ConversationsWrapperProps {
 }
 const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
   return (
-    <Box width={{ base: "100%", md: "400px" }} bg="whiteAlpha.50" py={6} px={3}>
+    <Box width={{ base: "100%", md: "400px" }} bg="#2A2A2A" py={6} px={3}>
       <ConversationList session={session} />
     </Box>
   );
