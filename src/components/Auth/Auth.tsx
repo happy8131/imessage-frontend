@@ -5,7 +5,6 @@ import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-
 import UserOperations from "../../graphql/operations/user";
 
 interface IAuthProps {
