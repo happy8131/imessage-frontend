@@ -24,6 +24,7 @@ import UserSearchList from "./userSearchList";
 import Participants from "./Participants";
 import toast from "react-hot-toast";
 import { Session } from "next-auth";
+import { useRouter } from "next/router";
 
 interface ModalProps {
   session: Session;
@@ -35,6 +36,9 @@ const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
   const {
     user: { id: userId },
   } = session;
+
+  const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   const [searchUsers, { data, loading, error }] = useLazyQuery<any>(
@@ -46,7 +50,7 @@ const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
       ConversationOperations.Mutations.createConversation
     );
   console.log("HERE IS SEARCH DATA", data);
-  console.log(participants.map((s) => s.id));
+
   const onCreateConversation = async () => {
     const participantIds = [userId, ...participants.map((p) => p.id)];
 
@@ -57,6 +61,20 @@ const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
           participantIds,
         },
       });
+
+      if (!data?.createConversation) {
+        throw new Error("Failed to create conversation");
+      }
+
+      const {
+        createConversation: { conversationId },
+      } = data;
+
+      router.push({ query: { conversationId } });
+
+      setParticipants([]);
+      setUsername("");
+      onClose();
 
       console.log("DATA", data);
     } catch (err: any) {
