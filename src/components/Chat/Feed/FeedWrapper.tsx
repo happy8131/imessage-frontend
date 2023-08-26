@@ -19,7 +19,7 @@ const FeedWrapper = ({ session }: FeedWrapperProps) => {
       {conversationId ? (
         <Flex color="whiteAlpha.900">{conversationId}</Flex>
       ) : (
-        <div>No Conversation Selcted</div>
+        <div color="whiteAlpha.900">No Conversation Selcted</div>
       )}
     </Flex>
   );
