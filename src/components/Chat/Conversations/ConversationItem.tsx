@@ -11,7 +11,6 @@ const ConversationItem = ({ conversation }: ConversationItemProps) => {
     <Stack
       p={4}
       _hover={{ bg: "whiteAlpha.200" }}
-      border="1px solid red"
       borderRadius={4}
       color="whiteAlpha.900"
     >
