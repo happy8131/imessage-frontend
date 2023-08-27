@@ -37,11 +37,11 @@ export default {
   },
   Subscriptions: {
     conversationCreated: gql`
-    subscription ConversationCreated {
-      conversationCreated {
-        ${ConversationFields}
+      subscription ConversationCreated {
+        conversationCreated {
+          ${ConversationFields}
+        }
       }
-    }
-  `,
+    `,
   },
 };
