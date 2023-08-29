@@ -70,7 +70,7 @@ const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
         createConversation: { conversationId },
       } = data;
 
-      router.push({ query: { conversationId } });
+      router.push({ query: { conversationId } }); //대화방 주소
 
       setParticipants([]);
       setUsername("");
@@ -107,7 +107,7 @@ const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent pb={4}>
-          <ModalHeader>Create a Conversations</ModalHeader>
+          <ModalHeader>대화 생성</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={onSearch}>
@@ -143,7 +143,7 @@ const ConversationModal = ({ session, isOpen, onClose }: ModalProps) => {
                   isLoading={createConversationLoading}
                   onClick={onCreateConversation}
                 >
-                  Create Conversation
+                  대화 생성
                 </Button>
               </>
             )}

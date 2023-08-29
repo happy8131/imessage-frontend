@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { ConversationPopulated } from "../../../../../backend/src/util/types";
+// import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import ConversationItem from "./ConversationItem";
 import ConversationMoal from "./Modal/Modal";
 
@@ -48,24 +48,15 @@ const ConversationList = ({
         </Text>
       </Box>
       <ConversationMoal session={session} isOpen={isOpen} onClose={onClose} />
-      {conversations?.map(
-        (
-          conversation: {} & {
-            id: string;
-            latestMessageId: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-          }
-        ) => (
-          <ConversationItem
-            key={conversation.id}
-            userId={userId}
-            conversation={conversation}
-            onClick={() => onViewConversation(conversation.id)}
-            isSelected={conversation.id === router.query.conversation}
-          />
-        )
-      )}
+      {conversations?.map((conversation: any) => (
+        <ConversationItem
+          key={conversation.id}
+          userId={userId}
+          conversation={conversation}
+          onClick={() => onViewConversation(conversation.id)}
+          isSelected={conversation.id === router.query.conversation}
+        />
+      ))}
     </Box>
   );
 };
