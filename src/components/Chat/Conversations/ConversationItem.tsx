@@ -15,8 +15,7 @@ import React, { useState } from "react";
 import { MdDeleteOutline } from "react-icons/md";
 import { BiLogOut } from "react-icons/bi";
 import { AiOutlineEdit } from "react-icons/ai";
-
-import { ConversationPopulated } from "../../../../../backend/src/util/types";
+// import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import { formatUsernames } from "@/util/function";
 
 const formatRelativeLocale = {
@@ -28,7 +27,7 @@ const formatRelativeLocale = {
 
 interface ConversationItemProps {
   userId: string;
-  conversation: ConversationPopulated;
+  conversation: any;
   onClick: () => void;
   isSelected: boolean;
   // onEditConversation?: () => void;
@@ -62,7 +61,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
   //  const showMenu =
   //  onEditConversation && onDeleteConversation && onLeaveConversation;
-
+  console.log(conversation);
   return (
     <Stack
       direction="row"

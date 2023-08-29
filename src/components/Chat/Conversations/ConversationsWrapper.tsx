@@ -4,20 +4,30 @@ import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import ConversationOperations from "../../../graphql/operations/conversation";
 import { ConversationsData } from "@/util/types";
-import { ConversationPopulated } from "../../../../../backend/src/util/types";
+// import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 
 interface ConversationsWrapperProps {
   session: Session;
 }
+
+interface ConversationProps {
+  conversations: {
+    id: string;
+    latestMessage: any;
+    participants: any[];
+    updateAt: string;
+  }[];
+}
+
 const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
   const {
     data: conversationsData,
     error: conversationsError,
     loading: conversationsLoading,
     subscribeToMore,
-  } = useQuery<ConversationsData>(ConversationOperations.Queries.conversations);
+  } = useQuery<ConversationProps>(ConversationOperations.Queries.conversations);
 
   const router = useRouter();
   const {
@@ -37,7 +47,7 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
           subscriptionData,
         }: {
           subscriptionData: {
-            data: { conversationCreated: ConversationPopulated };
+            data: { conversationCreated: any };
           };
         }
       ) => {

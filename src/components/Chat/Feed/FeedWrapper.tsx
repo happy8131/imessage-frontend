@@ -34,7 +34,7 @@ const FeedWrapper = ({ session }: FeedWrapperProps) => {
           {/* <Message /> */}
         </Flex>
       ) : (
-        <div color="whiteAlpha.900">No Conversation Selcted</div>
+        <div>No Conversation Selcted</div>
       )}
     </Flex>
   );

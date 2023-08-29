@@ -13,7 +13,7 @@ const Chat = ({ session }: ChatProps) => {
     <Flex height="100vh" bg="#1F1F1F">
       <ConversationsWrapper session={session} />
       <FeedWrapper session={session} />
-      <Button onClick={() => signOut()}>Logout</Button>
+      {/* <Button onClick={() => signOut()}>Logout</Button> */}
     </Flex>
   );
 };
