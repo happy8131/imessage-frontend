@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { SendMessageArgments } from "../../../../../../backend/src/util/types";
 import MessagesOperations from "../../../../graphql/operations/messages";
 import { ObjectID } from "bson";
+import { MessagesData } from "@/util/types";
 
 interface MessageInputProps {
   session: Session;
@@ -30,9 +31,44 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
         conversationId,
         body: messageBody,
       };
-      const { data, errors } = await sendMessage({
+
+      setMessageBody("");
+
+      const { data, errors }: any = await sendMessage({
         variables: {
           ...newMessage,
+        },
+        optimisticResponse: {
+          sendMessage: true,
+        },
+        update: (cache) => {
+          const existing = cache.readQuery<MessagesData>({
+            query: MessagesOperations.Query.messages,
+            variables: { conversationId },
+          }) as MessagesData;
+
+          cache.writeQuery<MessagesData, { conversationId: string }>({
+            query: MessagesOperations.Query.messages,
+            variables: { conversationId },
+            data: {
+              ...existing,
+              messages: [
+                {
+                  id: newId,
+                  body: messageBody,
+                  senderId: session.user.id,
+                  conversationId,
+                  sender: {
+                    id: session.user.id,
+                    username: session.user.username,
+                  },
+                  createdAt: new Date(Date.now()),
+                  updatedAt: new Date(Date.now()),
+                },
+                ...existing.messages,
+              ],
+            },
+          });
         },
       });
 
