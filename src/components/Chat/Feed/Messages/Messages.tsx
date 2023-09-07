@@ -5,6 +5,7 @@ import { Flex, Stack, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import MessagesOperations from "../../../../graphql/operations/messages";
+import MessageItem from "./MessageItem";
 
 interface MessagesProps {
   userId: string;
@@ -24,12 +25,29 @@ const Messages = ({ userId, conversationId }: MessagesProps) => {
     }
   );
 
-  if (error) {
-    return null;
-  }
+  // const subscribeToMoreMessages = (conversationId: string) => {
+  //   subscribeToMore({
+  //     document: MessagesOperations.Subscription.messageSent,
+  //     variables: {
+  //       conversationId,
+  //     },
+  //     updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
+  //       if (!subscriptionData) return prev;
 
-  const subscribeToMoreMessages = (conversationId: string) => {
-    subscribeToMore({
+  //       const newMessage: any = subscriptionData.data.messageSent;
+  //       console.log("newMessage", newMessage, "prev", prev);
+  //       return Object.assign({}, prev, {
+  //         messages:
+  //           newMessage.sender.id === userId
+  //             ? prev.messages
+  //             : [newMessage, ...prev.messages],
+  //       });
+  //     },
+  //   });
+  // };
+  // console.log(userId);
+  useEffect(() => {
+    let unsubscribe = subscribeToMore({
       document: MessagesOperations.Subscription.messageSent,
       variables: {
         conversationId,
@@ -37,18 +55,24 @@ const Messages = ({ userId, conversationId }: MessagesProps) => {
       updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
         if (!subscriptionData) return prev;
 
-        const newMessage = subscriptionData.data.messageSent;
-
+        const newMessage: any = subscriptionData.data.messageSent;
         return Object.assign({}, prev, {
-          messages: [newMessage, ...prev.messages],
+          // if sender then we have the value in the cache, no need to update with new value
+          // if not the sender, need to fetch new message
+          messages:
+            newMessage.sender.id === userId
+              ? prev.messages
+              : [newMessage, ...prev.messages],
         });
       },
     });
-  };
 
-  useEffect(() => {
-    subscribeToMoreMessages(conversationId);
+    return () => unsubscribe();
   }, [conversationId]);
+
+  if (error) {
+    return null;
+  }
 
   console.log("HERE IS MESSAGES DATA", data);
 
@@ -63,7 +87,11 @@ const Messages = ({ userId, conversationId }: MessagesProps) => {
       {data?.messages && (
         <Flex direction="column-reverse" overflowY="scroll" height="100%">
           {data.messages.map((message: any) => (
-            <Text key={message.body}>{message.body}</Text>
+            <MessageItem
+              key={message.id}
+              message={message}
+              sentByMe={message.sender.id === userId}
+            />
           ))}
         </Flex>
       )}
