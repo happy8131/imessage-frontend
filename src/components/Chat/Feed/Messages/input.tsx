@@ -47,7 +47,7 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
             variables: { conversationId },
           }) as MessagesData;
 
-          cache.writeQuery<MessagesData, { conversationId: string }>({
+          cache.writeQuery<any, { conversationId: string }>({
             query: MessagesOperations.Query.messages,
             variables: { conversationId },
             data: {
