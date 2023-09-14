@@ -9,7 +9,10 @@ import ConversationMoal from "./Modal/Modal";
 interface ConversationListProps {
   session: Session;
   conversations: any;
-  onViewConversation: (conversationId: string) => void;
+  onViewConversation: (
+    conversationId: string,
+    hasSeenLatestMessage: boolean
+  ) => void;
 }
 
 const ConversationList = ({
@@ -48,15 +51,27 @@ const ConversationList = ({
         </Text>
       </Box>
       <ConversationMoal session={session} isOpen={isOpen} onClose={onClose} />
-      {conversations?.map((conversation: any) => (
-        <ConversationItem
-          key={conversation.id}
-          userId={userId}
-          conversation={conversation}
-          onClick={() => onViewConversation(conversation.id)}
-          isSelected={conversation.id === router.query.conversation}
-        />
-      ))}
+      {conversations?.map((conversation: any) => {
+        const participant = conversation.participants.find(
+          (p: any) => p.user.id === userId
+        );
+
+        return (
+          <ConversationItem
+            key={conversation.id}
+            userId={userId}
+            conversation={conversation}
+            onClick={() =>
+              onViewConversation(
+                conversation.id,
+                participant?.hasSeenLatestMessage
+              )
+            }
+            hasSeenLatestMessage={participant?.hasSeenLatestMessage}
+            isSelected={conversation.id === router.query.conversation}
+          />
+        );
+      })}
     </Box>
   );
 };
