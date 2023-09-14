@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
@@ -8,6 +8,7 @@ import { ConversationsData } from "@/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "@/components/common/SkeletonLoader";
+import { ParticipantPopulated } from "../../../../../backend/src/util/types";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -23,6 +24,14 @@ interface ConversationProps {
 }
 
 const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
+  const router = useRouter();
+  const {
+    query: { conversationId },
+  } = router;
+  const {
+    user: { id: userId },
+  } = session;
+
   const {
     data: conversationsData,
     error: conversationsError,
@@ -30,17 +39,83 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
     subscribeToMore,
   } = useQuery<ConversationProps>(ConversationOperations.Queries.conversations);
 
-  const router = useRouter();
-  const {
-    query: { conversationId },
-  } = router;
+  const [markConversationAsRead] = useMutation<
+    { markConversationAsRead: boolean },
+    { userId: string; conversationId: string }
+  >(ConversationOperations.Mutations.markConversationAsRead);
 
-  const onViewConversations = async (conversationId: string) => {
+  const onViewConversations = async (
+    conversationId: string,
+    hasSeenLatestMessage: boolean
+  ) => {
     router.push({ query: { conversationId } });
+
+    if (hasSeenLatestMessage) return;
+
+    try {
+      await markConversationAsRead({
+        variables: {
+          userId,
+          conversationId,
+        },
+        optimisticResponse: {
+          markConversationAsRead: true,
+        },
+        update: (cache) => {
+          const participantsFragment = cache.readFragment<{
+            participants: Array<ParticipantPopulated>;
+          }>({
+            id: `Conversation:${conversationId}`,
+            fragment: gql`
+              fragment Participants on Conversation {
+                participants {
+                  user {
+                    id
+                    username
+                  }
+                  hasSeenLatestMessage
+                }
+              }
+            `,
+          });
+
+          if (!participantsFragment) return;
+
+          const participants = [...participantsFragment.participants];
+
+          const userParticipantIdx = participants.findIndex(
+            (p: any) => p.user.id === userId
+          );
+
+          if (userParticipantIdx === -1) return;
+
+          const userParticipant = participants[userParticipantIdx];
+
+          participants[userParticipantIdx] = {
+            ...userParticipant,
+            hasSeenLatestMessage: true,
+          };
+
+          cache.writeFragment({
+            id: `Conversation:${conversationId}`,
+            fragment: gql`
+              fragment UpdatedParticipant on Conversation {
+                participants
+              }
+            `,
+            data: {
+              participants,
+            },
+          });
+        },
+      });
+    } catch (err) {
+      console.log("onViewConversations", err);
+    }
   };
 
-  const subscribeToNewConversations = () => {
-    subscribeToMore({
+  useEffect(() => {
+    const unsibscrobe = subscribeToMore({
       document: ConversationOperations.Subscriptions.conversationCreated,
       updateQuery: (
         prev,
@@ -61,10 +136,8 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
         });
       },
     });
-  };
 
-  useEffect(() => {
-    subscribeToNewConversations();
+    return () => unsibscrobe();
   }, []);
 
   console.log("HERE IS DATA", conversationsData);

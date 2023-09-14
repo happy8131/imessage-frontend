@@ -11,7 +11,7 @@ import {
 import { formatRelative } from "date-fns";
 import enUS from "date-fns/locale/en-US";
 import React, { useState } from "react";
-// import { GoPrimitiveDot } from "react-icons/go";
+import { GoDotFill } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
 import { BiLogOut } from "react-icons/bi";
 import { AiOutlineEdit } from "react-icons/ai";
@@ -29,6 +29,7 @@ interface ConversationItemProps {
   userId: string;
   conversation: any;
   onClick: () => void;
+  hasSeenLatestMessage: boolean;
   isSelected: boolean;
   // onEditConversation?: () => void;
   // hasSeenLatestMessage?: boolean;
@@ -41,6 +42,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   userId,
   conversation,
   onClick,
+  hasSeenLatestMessage,
   isSelected,
   // selectedConversationId,
   // hasSeenLatestMessage,
@@ -58,7 +60,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       setMenuOpen(true);
     }
   };
-
+  console.log(hasSeenLatestMessage);
   //  const showMenu =
   //  onEditConversation && onDeleteConversation && onLeaveConversation;
   console.log(conversation);
@@ -110,12 +112,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           )}
         </MenuList>
       </Menu>
-
-      {/* <Flex position="absolute" left="-6px">
+      <Flex position="absolute" left="-6px">
         {hasSeenLatestMessage === false && (
-          <GoPrimitiveDot fontSize={18} color="#6B46C1" />
+          <GoDotFill fontSize={18} color="#6B46C1" />
         )}
-      </Flex> */}
+      </Flex>
       <Avatar />
       <Flex justify="space-between" width="80%" height="100%">
         <Flex direction="column" width="70%" height="100%">
