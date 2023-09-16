@@ -25,27 +25,6 @@ const Messages = ({ userId, conversationId }: MessagesProps) => {
     }
   );
 
-  // const subscribeToMoreMessages = (conversationId: string) => {
-  //   subscribeToMore({
-  //     document: MessagesOperations.Subscription.messageSent,
-  //     variables: {
-  //       conversationId,
-  //     },
-  //     updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
-  //       if (!subscriptionData) return prev;
-
-  //       const newMessage: any = subscriptionData.data.messageSent;
-  //       console.log("newMessage", newMessage, "prev", prev);
-  //       return Object.assign({}, prev, {
-  //         messages:
-  //           newMessage.sender.id === userId
-  //             ? prev.messages
-  //             : [newMessage, ...prev.messages],
-  //       });
-  //     },
-  //   });
-  // };
-  // console.log(userId);
   useEffect(() => {
     let unsubscribe = subscribeToMore({
       document: MessagesOperations.Subscription.messageSent,
