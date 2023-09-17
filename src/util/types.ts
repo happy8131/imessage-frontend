@@ -1,4 +1,7 @@
-import { MessagePopulated } from "../../../backend/src/util/types";
+import {
+  ConversationPopulated,
+  MessagePopulated,
+} from "../../../backend/src/util/types";
 
 // import { ConversationPopulated } from "./../../../backend/src/util/types";
 export interface CreateUsernameData {
@@ -41,6 +44,15 @@ export interface CreateConversationData {
 
 export interface CreateConversationInput {
   praticipantIds: Array<string>;
+}
+
+export interface ConversationUpdatedData {
+  conversationUpdated: {
+    // conversation:Omit<ConversationPopulated,"latestMessage"> &{
+    //   latestMessage:MessagePopulated
+    // }
+    conversation: ConversationPopulated;
+  };
 }
 
 //Message

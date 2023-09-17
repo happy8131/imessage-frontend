@@ -1,9 +1,9 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import ConversationOperations from "../../../graphql/operations/conversation";
-import { ConversationsData } from "@/util/types";
+import { ConversationsData, ConversationUpdatedData } from "@/util/types";
 // import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -44,12 +44,39 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
     { userId: string; conversationId: string }
   >(ConversationOperations.Mutations.markConversationAsRead);
 
-  const onViewConversations = async (
+  useSubscription<ConversationUpdatedData>(
+    ConversationOperations.Subscriptions.conversationUpdated,
+    {
+      onData: ({ client, data }) => {
+        const { data: subscriptionData } = data;
+
+        console.log("ON DATA FIRNING", subscriptionData);
+
+        if (!subscriptionData) return;
+
+        const {
+          conversationUpdated: { conversation: updatedConversation },
+        } = subscriptionData;
+
+        const currentlyViewingConversation =
+          updatedConversation.id === conversationId;
+        console.log(
+          "currentlyViewingConversation",
+          currentlyViewingConversation
+        );
+        if (currentlyViewingConversation) {
+          onViewConversation(conversationId as string, false);
+        }
+      },
+    }
+  );
+
+  const onViewConversation = async (
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
     router.push({ query: { conversationId } });
-
+    console.log("CLICK");
     if (hasSeenLatestMessage) return;
 
     try {
@@ -158,7 +185,7 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
         <ConversationList
           session={session}
           conversations={conversationsData?.conversations}
-          onViewConversation={onViewConversations}
+          onViewConversation={onViewConversation}
         />
       )}
     </Box>
