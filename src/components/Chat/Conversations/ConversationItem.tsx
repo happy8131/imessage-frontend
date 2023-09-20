@@ -31,10 +31,10 @@ interface ConversationItemProps {
   onClick: () => void;
   hasSeenLatestMessage: boolean;
   isSelected: boolean;
+  onDeleteConversation: (conversationId: string) => void;
   // onEditConversation?: () => void;
   // hasSeenLatestMessage?: boolean;
   // selectedConversationId?: string;
-  // onDeleteConversation?: (conversationId: string) => void;
   // onLeaveConversation?: (conversation: ConversationPopulated) => void;
 }
 
@@ -44,10 +44,10 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onClick,
   hasSeenLatestMessage,
   isSelected,
+  onDeleteConversation,
   // selectedConversationId,
   // hasSeenLatestMessage,
   // onEditConversation,
-  // onDeleteConversation,
   // onLeaveConversation,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -80,16 +80,29 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     >
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
         <MenuList bg="#2d2d2d">
-          <MenuItem
+          {/* <MenuItem
             icon={<AiOutlineEdit fontSize={20} />}
             onClick={(event) => {
               event.stopPropagation();
               //  onEditConversation();
             }}
+            bg="#2d2d2d"
+            _hover={{ bg: "whiteAlpha.300" }}
           >
             Edit
+          </MenuItem> */}
+          <MenuItem
+            icon={<MdDeleteOutline fontSize={20} />}
+            onClick={(event) => {
+              event.stopPropagation();
+              onDeleteConversation(conversation.id);
+            }}
+            bg="#2d2d2d"
+            _hover={{ bg: "whiteAlpha.300" }}
+          >
+            삭제
           </MenuItem>
-          {conversation.participants.length > 2 ? (
+          {/* {conversation.participants.length > 2 ? (
             <MenuItem
               icon={<BiLogOut fontSize={20} />}
               onClick={(event) => {
@@ -109,7 +122,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             >
               Delete
             </MenuItem>
-          )}
+          )} */}
         </MenuList>
       </Menu>
       <Flex position="absolute" left="-6px">

@@ -3,7 +3,11 @@ import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import ConversationOperations from "../../../graphql/operations/conversation";
-import { ConversationsData, ConversationUpdatedData } from "@/util/types";
+import {
+  ConversationDeletedData,
+  ConversationsData,
+  ConversationUpdatedData,
+} from "@/util/types";
 // import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -48,6 +52,7 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
     ConversationOperations.Subscriptions.conversationUpdated,
     {
       onData: ({ client, data }) => {
+        console.log("DATA", data);
         const { data: subscriptionData } = data;
 
         console.log("ON DATA FIRNING", subscriptionData);
@@ -71,12 +76,44 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
     }
   );
 
+  useSubscription<ConversationDeletedData>(
+    ConversationOperations.Subscriptions.conversationDeleted,
+    {
+      onData: ({ client, data }) => {
+        console.log("HERE IS SUB DATA", data);
+        const { data: subscriptionData } = data;
+
+        if (!subscriptionData) return;
+
+        const existing = client.readQuery<ConversationsData>({
+          query: ConversationOperations.Queries.conversations,
+        });
+
+        if (!existing) return;
+
+        const { conversations } = existing;
+        const {
+          conversationDeleted: { id: deletedConversationId },
+        } = subscriptionData;
+
+        client.writeQuery<ConversationsData>({
+          query: ConversationOperations.Queries.conversations,
+          data: {
+            conversations: conversations.filter(
+              (conversation) => conversation.id !== deletedConversationId
+            ),
+          },
+        });
+      },
+    }
+  );
+
   const onViewConversation = async (
     conversationId: string,
     hasSeenLatestMessage: boolean
   ) => {
     router.push({ query: { conversationId } });
-    console.log("CLICK");
+
     if (hasSeenLatestMessage) return;
 
     try {
@@ -172,7 +209,7 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
   return (
     <Box
       display={{ base: conversationId ? "none" : "flex", md: "flex" }}
-      width={{ base: "100%", md: "400px" }}
+      width={{ base: "100%", md: "430px" }}
       flexDirection="column"
       bg="whiteAlpha.50"
       gap={4}
