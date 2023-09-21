@@ -62,15 +62,22 @@ const Auth = ({ session, reloadSession }: IAuthProps) => {
             </Button>
           </>
         ) : (
-          <>
-            <Text fontSize="3xl">MessengerQL</Text>
+          <Stack spacing={1} align="center">
+            <Text fontSize="3xl">메시지 대화방</Text>
             <Button
               onClick={() => signIn("google")}
               leftIcon={<Image height="20px" src="/images/googlelogo.png" />}
             >
-              Continue with Google
+              Google Login
             </Button>
-          </>
+            <Button
+              onClick={() => signIn("naver")}
+              width="165px"
+              leftIcon={<Image height="20px" src="/images/naverlogo.png" />}
+            >
+              Naver Login
+            </Button>
+          </Stack>
         )}
       </Stack>
     </Center>
