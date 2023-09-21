@@ -3,7 +3,7 @@ import { Box, Input } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { SendMessageArgments } from "../../../../../../backend/src/util/types";
+// import { SendMessageArgments } from "../../../../../../backend/src/util/types";
 import MessagesOperations from "../../../../graphql/operations/messages";
 import { ObjectID } from "bson";
 import { MessagesData } from "@/util/types";
@@ -14,7 +14,7 @@ interface MessageInputProps {
 }
 const MessageInput = ({ session, conversationId }: MessageInputProps) => {
   const [messageBody, setMessageBody] = useState("");
-  const [sendMessage] = useMutation<SendMessageArgments>(
+  const [sendMessage] = useMutation<any>(
     MessagesOperations.Mutation.sendMessage
   );
 
@@ -25,7 +25,7 @@ const MessageInput = ({ session, conversationId }: MessageInputProps) => {
       //call sendMessage mutation
       const { id: senderId } = session.user;
       const newId = new ObjectID().toString();
-      const newMessage: SendMessageArgments = {
+      const newMessage: any = {
         id: newId,
         senderId,
         conversationId,
