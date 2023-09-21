@@ -12,7 +12,7 @@ import {
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "@/components/common/SkeletonLoader";
-import { ParticipantPopulated } from "../../../../../backend/src/util/types";
+// import { ParticipantPopulated } from "../../../../../backend/src/util/types";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -127,7 +127,7 @@ const ConversationsWrapper = ({ session }: ConversationsWrapperProps) => {
         },
         update: (cache) => {
           const participantsFragment = cache.readFragment<{
-            participants: Array<ParticipantPopulated>;
+            participants: Array<any>;
           }>({
             id: `Conversation:${conversationId}`,
             fragment: gql`
