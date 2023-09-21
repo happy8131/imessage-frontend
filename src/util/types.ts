@@ -1,7 +1,4 @@
-import {
-  ConversationPopulated,
-  MessagePopulated,
-} from "../../../backend/src/util/types";
+//import {ConversationPopulated,MessagePopulated,} from "../../../backend/src/util/types";
 
 // import { ConversationPopulated } from "./../../../backend/src/util/types";
 export interface CreateUsernameData {
@@ -51,7 +48,7 @@ export interface ConversationUpdatedData {
     // conversation:Omit<ConversationPopulated,"latestMessage"> &{
     //   latestMessage:MessagePopulated
     // }
-    conversation: ConversationPopulated;
+    conversation: any;
   };
 }
 
@@ -64,7 +61,7 @@ export interface ConversationDeletedData {
 //Message
 
 export interface MessagesData {
-  messages: Array<MessagePopulated>;
+  messages: Array<any>;
 }
 
 export interface MessagesVariables {
@@ -74,7 +71,7 @@ export interface MessagesVariables {
 export interface MessageSubscriptionData {
   subscriptionData: {
     data: {
-      messageSent: MessagePopulated;
+      messageSent: any;
     };
   };
 }
