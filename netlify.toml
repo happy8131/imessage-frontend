@@ -2,11 +2,10 @@
   package = "@netlify/plugin-nextjs"
   
 [[redirects]]
-  from = "https://deploy-preview-42--musical-lokum-8fe231.netlify.app/"
-  to = "https://deploy-preview-42--musical-lokum-8fe231.netlify.app/"
+  from = "/*"
+  to = "/index.html"
   status = 200
 
-
 [build]
-  command = "npm run build"
-  publish = ".next"
+ command = "npm run build && npm run export"
+ publish = "out"
