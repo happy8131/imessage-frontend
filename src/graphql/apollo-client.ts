@@ -13,7 +13,7 @@ const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: process.env.NEXT_PUBLIC_NEXTAUTH_WS,
+          url: process.env.NEXT_PUBLIC_NEXTAUTH_WS as string,
           connectionParams: async () => ({
             session: await getSession(),
           }),
