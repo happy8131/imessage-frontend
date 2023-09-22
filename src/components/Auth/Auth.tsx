@@ -45,7 +45,7 @@ const Auth = ({ session, reloadSession }: IAuthProps) => {
       console.log("err", error);
     }
   };
-  console.log("se", session);
+
   return (
     <Center height="100vh">
       <Stack spacing={8} align="center">
