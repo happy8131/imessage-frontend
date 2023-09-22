@@ -2,8 +2,8 @@
   package = "@netlify/plugin-nextjs"
   
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "https://deploy-preview-42--musical-lokum-8fe231.netlify.app/"
+  to = "https://deploy-preview-42--musical-lokum-8fe231.netlify.app/"
   status = 200
 
 
